@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYNAPSE Emotional Support System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤︎</text></svg>">
+</head>
+<body>
+
+    <!-- === Floating Disclaimer === -->
+    <div id="disclaimer-popup">
+        <div class="disclaimer-content">
+            <p><strong>Disclaimer:</strong> SYNAPSE is a proof-of-concept project created for the HackSocial 2025 hackathon. It is an interactive art piece and a gamified wellness tool, not a substitute for professional medical or psychological advice, diagnosis, or treatment. Please consult with a qualified health professional for any mental health concerns.</p>
+            <button id="close-disclaimer-btn">I Understand</button>
+        </div>
+    </div>
+    
+    <div id="persistent-ui" class="persistent-ui">
+        <button id="menu-btn" class="ui-btn">MENU</button>
+        <div class="theme-switch-wrapper">
+            <span>DAY</span>
+            <label class="theme-switch" for="theme-toggle"><input type="checkbox" id="theme-toggle" /><span class="slider round"></span></label>
+            <span>NIGHT</span>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <div id="menu-modal" class="modal-overlay"><div class="modal-content"><h2 class="title" style="margin-bottom: 1rem; font-size: 2rem;">PAUSE</h2><button id="resume-btn" class="btn">RESUME</button><button id="pause-save-btn" class="btn">SAVE</button><button id="pause-load-btn" class="btn" disabled>LOAD</button><button id="pause-title-btn" class="btn">RETURN TO TITLE</button></div></div>
+    <div id="save-load-modal" class="modal-overlay"><div class="modal-content"><h2 id="save-load-title" class="title" style="margin-bottom: 1rem; font-size: 2rem;">SAVE DATA</h2><div id="slot-container"></div><button id="save-load-back-btn" class="btn" style="margin-top: 1rem;">RETURN</button></div></div>
+    <div id="config-modal" class="modal-overlay"><div class="modal-content"><h2 class="title" style="margin-bottom: 2rem; font-size: 2rem;">SYSTEM CONFIG</h2><div class="config-option"><label for="text-speed-slider">TEXT SPEED</label><div class="slider-labels"><span>SLOW</span><span>FAST</span></div><input type="range" id="text-speed-slider" min="10" max="80" value="50"></div><button id="config-back-btn" class="btn" style="margin-top: 2rem;">RETURN</button></div></div>
+
+    <div id="app">
+        <div id="glitch-overlay"></div>
+        
+        <!-- Screens -->
+        <div id="title-screen" class="screen"><h1 id="title-logo">SYNAPSE</h1><p id="press-start-prompt" class="press-start-prompt">CLICK TO INITIALIZE</p></div>
+        <div id="loading-screen" class="screen"><p id="loading-text" style="line-height: 2;"></p><div id="skip-boot-prompt" class="skip-prompt" style="display: none;">SKIP ></div></div>
+        <div id="main-menu-screen" class="screen"><h1 class="title" data-day="SYS.MENU" data-night="NIGHTCLUB.SYS">SYS.MENU</h1><div class="menu-buttons"><button id="start-btn" class="btn" data-day="INITIALIZE SESSION" data-night="START THE NIGHT">INITIALIZE SESSION</button><button id="main-load-btn" class="btn" data-day="LOAD SESSION" data-night="CONTINUE...?" disabled>LOAD SESSION</button><button id="memories-btn" class="btn" data-day="MEMORY ARCHIVE" data-night="RECALL SESSION" disabled>MEMORY ARCHIVE</button><button id="config-btn" class="btn" data-day="SYSTEM CONFIG" data-night="ADJUST SYSTEM">SYSTEM CONFIG</button></div></div>
+        <div id="intro-screen" class="screen"><h2 id="intro-text"></h2><div id="skip-intro-btn" class="skip-prompt">SKIP ></div></div>
+        <div id="route-selection-screen" class="screen">
+            <h2 data-day="SELECT CO-PROCESSOR_" data-night="SELECT YOUR SYNAPSE_">SELECT CO-PROCESSOR_</h2>
+            <div class="character-cards">
+                <div class="char-card" data-char="akira"><img src="https://placehold.co/150x150/FF69B4/FFFFFF?text=AKIRA" alt="Akira"><p>AKIRA</p></div>
+                <div class="char-card" data-char="ren"><img src="https://placehold.co/150x150/1E90FF/FFFFFF?text=REN" alt="Ren"><p>REN</p></div>
+                <div id="songmin-char-card" class="char-card" data-char="songmin" style="display: none;"><img src="https://placehold.co/150x150/c0c0c0/000000?text=SONGMIN" alt="Songmin"><p>SONGMIN</p></div>
+            </div>
+        </div>
+        <div id="game-screen" class="screen">
+            <div id="background"></div>
+            <img id="character-sprite" alt="Character">
+            <div id="secret-item-overlay">
+                <div id="secret-item-content">
+                    <h4>A Thank You Note</h4>
+                    To Mr. Songmin,<br><br>
+                    Thank you so much for your generous donation this month. The children's school lunches are covered again.
+                    <br><br>
+                    Everyone said they really loved the manga you brought last time and hope you'll come visit again soon.
+                    <br><br>
+                    <p style="text-align: right;">All the best,<br>Dandelion Orphanage</p>
+                </div>
+            </div>
+            <div id="game-ui-container">
+                <div id="options-box"></div>
+                <div id="dialogue-box">
+                    <div id="character-name"></div>
+                    <span id="dialogue-text"></span><span id="dialogue-cursor"></span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="cg-screen" class="screen"><h3 id="cg-title"></h3><img id="cg-image" src="" alt="Ending CG"><p class="press-start-prompt" style="animation-delay: 1s; margin-top: 1rem;">SESSION ARCHIVED. CLICK TO CONTINUE.</p></div>
+        <div id="memories-screen" class="screen"><h1 class="title">MEMORY ARCHIVE</h1><div id="memories-gallery"></div><button id="memories-back-btn" class="btn" style="margin-top: 3rem;">RETURN</button></div>
+        <div id="unlock-notification-screen" class="screen"><h2 class="title" style="font-size: 2rem;">MEMORY DATA 100%</h2><p style="margin-top: -2rem; margin-bottom: 3rem;">A NEW CO-PROCESSOR IS NOW AVAILABLE.</p><p class="press-start-prompt" style="animation-delay: 1s;">CLICK TO RETURN TO MENU</p></div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script src="script.js"></script>
+
+    <!-- === NEW: Small script for disclaimer functionality (does not affect script.js) === -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const disclaimer = document.getElementById('disclaimer-popup');
+            const closeBtn = document.getElementById('close-disclaimer-btn');
+            
+            if (disclaimer && closeBtn) {
+                // If user has closed it this session, keep it hidden.
+                if (sessionStorage.getItem('disclaimerAcknowledged')) {
+                    disclaimer.style.display = 'none';
+                } else {
+                    disclaimer.classList.add('visible');
+                }
+
+                closeBtn.addEventListener('click', () => {
+                    disclaimer.classList.remove('visible');
+                    // Remember that the user has acknowledged the disclaimer for this session
+                    sessionStorage.setItem('disclaimerAcknowledged', 'true');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
